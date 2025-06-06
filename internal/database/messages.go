@@ -14,6 +14,7 @@ type Message struct {
 	Body              string    `json:"body"`
 	Version           int32     `json:"version"`
 	ExternalCreatedAt time.Time `json:"external_created_at"`
+	Platform          string    `json:"platform"`
 	CreatedAt         time.Time `json:"-"`
 	ModifiedAt        time.Time `json:"-"`
 }
@@ -51,5 +52,54 @@ func (m MessageModel) Insert(message *Message) error {
 		&message.ModifiedAt,
 		&message.Version,
 	)
+
+}
+
+func (m *MessageModel) GetAll(limit, offset int) ([]*Message, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+	defer cancel()
+
+	query := `
+		SELECT id, external_id, author, title, body, version, external_created_at, platform, created_at, modified_at  FROM messages
+		ORDER BY created_at ASC
+		LIMIT $1 OFFSET $2
+	`
+	args := []any{limit, offset}
+	rows, err := m.DB.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	messages := []*Message{}
+
+	for rows.Next() {
+		var message Message
+		err := rows.Scan(
+			&message.ID,
+			&message.ExternalId,
+			&message.Author,
+			&message.Title,
+			&message.Body,
+			&message.Version,
+			&message.ExternalCreatedAt,
+			&message.Platform,
+			&message.CreatedAt,
+			&message.ModifiedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		messages = append(messages, &message)
+
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+
+	return messages, nil
 
 }
