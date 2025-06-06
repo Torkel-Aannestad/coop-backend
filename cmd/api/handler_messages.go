@@ -7,5 +7,5 @@ func (app *application) createMessageHandler(w http.ResponseWriter, r *http.Requ
 }
 
 func (app *application) listMessagesHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("createMessageHandler"))
+	w.Write([]byte("listMessageHandler"))
 }
