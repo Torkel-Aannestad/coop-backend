@@ -1,0 +1,7 @@
+bin
+.env
+tmp
+
+sqlc_generated
+test-commands.md
+tasks.md
