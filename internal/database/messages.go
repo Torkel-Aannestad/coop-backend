@@ -55,7 +55,7 @@ func (m MessageModel) Insert(message *Message) error {
 
 }
 
-func (m *MessageModel) GetAll(limit, offset int) ([]*Message, error) {
+func (m *MessageModel) Get(limit, offset int) ([]*Message, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
 	defer cancel()
 
