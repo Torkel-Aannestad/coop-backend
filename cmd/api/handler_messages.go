@@ -1,9 +1,52 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+
+	"github.com/Torkel-Aannestad/coop-backend/internal/database"
+)
 
 func (app *application) createMessageHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("createMessageHandler"))
+
+	var input struct {
+		ExternalId        string    `json:"external_id"`
+		Author            string    `json:"author"`
+		Title             string    `json:"title"`
+		Body              string    `json:"body"`
+		ExternalCreatedAt time.Time `json:"external_created_at"`
+		Platform          string    `json:"platform"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	message := database.Message{
+		ExternalId:        input.ExternalId,
+		Author:            input.Author,
+		Title:             input.Title,
+		Body:              input.Body,
+		ExternalCreatedAt: input.ExternalCreatedAt,
+		Platform:          input.Platform,
+	}
+
+	// validate input
+
+	err = app.models.Messages.Insert(&message)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"message": message}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
 }
 
 func (app *application) listMessagesHandler(w http.ResponseWriter, r *http.Request) {
