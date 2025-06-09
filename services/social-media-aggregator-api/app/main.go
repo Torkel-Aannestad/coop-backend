@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Torkel-Aannestad/coop-backend/internal/database"
+	"github.com/Torkel-Aannestad/coop-backend/services/social-media-aggregator-api/internal/database"
 	"github.com/joho/godotenv"
 )
 
@@ -33,7 +33,7 @@ func main() {
 	var cfg Config
 
 	godotenv.Load()
-	dsn := os.Getenv("COOP_DSN_DEV")
+	dsn := os.Getenv("DSN_DB_LOCAL_DEV")
 
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")

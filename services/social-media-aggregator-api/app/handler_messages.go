@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Torkel-Aannestad/coop-backend/internal/database"
+	"github.com/Torkel-Aannestad/coop-backend/services/social-media-aggregator-api/internal/database"
 )
 
 func (app *application) createMessageHandler(w http.ResponseWriter, r *http.Request) {
