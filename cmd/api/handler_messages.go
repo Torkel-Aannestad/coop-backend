@@ -50,5 +50,16 @@ func (app *application) createMessageHandler(w http.ResponseWriter, r *http.Requ
 }
 
 func (app *application) latestMessagesHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("listMessageHandler"))
+	// returns the 25 last messages from db
+
+	messages, err := app.models.Messages.GetList(25, 0)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, 200, envelope{"messages": messages}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
