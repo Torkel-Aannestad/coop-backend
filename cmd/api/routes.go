@@ -9,7 +9,7 @@ import (
 func (app *application) routes() http.Handler {
 	r := chi.NewRouter()
 	r.Get("/v1/healthcheck", app.healthcheckHandler)
-	r.Get("/v1/messages", app.listMessagesHandler)
+	r.Get("/v1/messages", app.latestMessagesHandler)
 	r.Post("/v1/messages", app.createMessageHandler)
 
 	return r

@@ -52,6 +52,11 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, loggerOptions))
 
 	db, err := database.OpenDB(cfg.db.dsn, cfg.db.maxOpenConns, cfg.db.maxIdleConns, cfg.db.maxIdleTime)
+	if err != nil {
+		logger.Error("failed to open db connection")
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
 
 	app := &application{
 		config: cfg,

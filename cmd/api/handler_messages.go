@@ -49,6 +49,6 @@ func (app *application) createMessageHandler(w http.ResponseWriter, r *http.Requ
 
 }
 
-func (app *application) listMessagesHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) latestMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("listMessageHandler"))
 }
