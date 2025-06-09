@@ -9,7 +9,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${DB_PASSWORD_DEV}
-      - POSTGRES_DB: social_media_aggregator
+      - POSTGRES_DB=social_media_aggregator
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -h localhost" ]
       interval: 1s
@@ -25,10 +25,12 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/local/service.api.Dockerfile
+    command: "--db-dsn=${DSN_DB_DEV}"
     ports:
       - "4000:4000"
     depends_on:
-      - postgres-db
+      monorepo-postgres-db:
+        condition: service_healthy
 
   # mastodon:
   #   container_name: service.mastodon
