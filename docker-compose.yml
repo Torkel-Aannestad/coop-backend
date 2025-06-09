@@ -1,0 +1,45 @@
+services:
+  monorepo-postgres-db:
+    container_name: monorepo-postgres-db
+    restart: unless-stopped
+    image: postgres:latest
+    ports:
+      - "5454:5432"
+    user: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD_DEV}
+      - POSTGRES_DB: social_media_aggregator
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -h localhost" ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    volumes:
+      - monorepo-data:/var/lib/postgresql/monorepo/data
+
+  api:
+    container_name: service.api
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: dockerfiles/local/service.api.Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres-db
+
+  # mastodon:
+  #   container_name: service.mastodon
+  #   restart: unless-stopped
+  #   build:
+  #     context: .
+  #     dockerfile: dockerfiles/local/service.mastodon.Dockerfile
+  #   ports:
+  #     - "5000:5000"
+  #   depends_on:
+  #     - api
+
+volumes:
+  monorepo-data:
