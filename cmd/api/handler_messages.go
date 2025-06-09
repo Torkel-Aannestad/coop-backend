@@ -1,21 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/Torkel-Aannestad/coop-backend/internal/database"
 )
 
 func (app *application) createMessageHandler(w http.ResponseWriter, r *http.Request) {
-
 	var input struct {
-		ExternalId        string    `json:"external_id"`
-		Author            string    `json:"author"`
-		Title             string    `json:"title"`
-		Body              string    `json:"body"`
-		ExternalCreatedAt time.Time `json:"external_created_at"`
-		Platform          string    `json:"platform"`
+		ExternalId string `json:"external_id"`
+		Author     string `json:"author"`
+		Title      string `json:"title"`
+		Body       string `json:"body"`
+		Platform   string `json:"platform"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -25,18 +23,19 @@ func (app *application) createMessageHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	message := database.Message{
-		ExternalId:        input.ExternalId,
-		Author:            input.Author,
-		Title:             input.Title,
-		Body:              input.Body,
-		ExternalCreatedAt: input.ExternalCreatedAt,
-		Platform:          input.Platform,
+		ExternalId: input.ExternalId,
+		Author:     input.Author,
+		Title:      input.Title,
+		Body:       input.Body,
+		Platform:   input.Platform,
 	}
 
+	fmt.Printf("message: %v\n", message)
 	// validate input
 
 	err = app.models.Messages.Insert(&message)
 	if err != nil {
+		// handle unique error for enternalId. continue with update instead.
 		app.serverErrorResponse(w, r, err)
 		return
 	}

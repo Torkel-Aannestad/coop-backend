@@ -7,16 +7,14 @@ import (
 )
 
 type Message struct {
-	ID                int64     `json:"id"`
-	ExternalId        string    `json:"external_id"`
-	Author            string    `json:"author"`
-	Title             string    `json:"title"`
-	Body              string    `json:"body"`
-	Version           int32     `json:"version"`
-	ExternalCreatedAt time.Time `json:"external_created_at"`
-	Platform          string    `json:"platform"`
-	CreatedAt         time.Time `json:"-"`
-	ModifiedAt        time.Time `json:"-"`
+	ID         int64     `json:"id"`
+	ExternalId string    `json:"external_id"`
+	Author     string    `json:"author"`
+	Title      string    `json:"title"`
+	Body       string    `json:"body"`
+	Platform   string    `json:"platform"`
+	CreatedAt  time.Time `json:"-"`
+	ModifiedAt time.Time `json:"-"`
 }
 
 type MessageModel struct {
@@ -33,24 +31,23 @@ func (m MessageModel) Insert(message *Message) error {
 	author,
 	title,
 	body,
-	external_created_at
+	platform
 	)
 	VALUES ($1, $2, $3, $4, $5)
-	RETURNING id, created_at, modified_at, version`
+	RETURNING id, created_at, modified_at`
 
 	args := []any{
 		message.ExternalId,
 		message.Author,
 		message.Title,
 		message.Body,
-		message.ExternalCreatedAt,
+		message.Platform,
 	}
 
 	return m.DB.QueryRowContext(ctx, query, args...).Scan(
 		&message.ID,
 		&message.CreatedAt,
 		&message.ModifiedAt,
-		&message.Version,
 	)
 
 }
@@ -60,7 +57,7 @@ func (m *MessageModel) GetList(limit, offset int) ([]*Message, error) {
 	defer cancel()
 
 	query := `
-		SELECT id, external_id, author, title, body, version, external_created_at, platform, created_at, modified_at  FROM messages
+		SELECT id, external_id, author, title, body, platform, created_at, modified_at  FROM messages
 		ORDER BY created_at ASC
 		LIMIT $1 OFFSET $2
 	`
@@ -81,8 +78,6 @@ func (m *MessageModel) GetList(limit, offset int) ([]*Message, error) {
 			&message.Author,
 			&message.Title,
 			&message.Body,
-			&message.Version,
-			&message.ExternalCreatedAt,
 			&message.Platform,
 			&message.CreatedAt,
 			&message.ModifiedAt,
