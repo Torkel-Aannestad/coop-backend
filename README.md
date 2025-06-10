@@ -31,13 +31,13 @@
 - set up a .env file with the four values in the env.sample
 
 ## Run Docker Compose
-- The folloing command starts the projects and starts fetching requests from mastodon.
+- The following command starts the projects and starts fetching requests from mastodon.
 ```shell
   Docker Compose up --build
 ```
 
 ## API
-## healthcheck
+## Healthcheck
 - Both services has a "/v1/healthcheck" endpoint
 - api on port 4000, mastodon on port 5000
 ```shell
@@ -76,4 +76,4 @@ BODY='{"external_id": "100", "author": "John McClane", "body": "Hans Gruber is a
 - graceful shutdown - Currently the api will not wait for inflight requests and will close the server regardless. 
 - Handle HTTP 429 (Too Many Requests) from the mastodon api by adjusting wait time and increaced backoff.
 - Remove code duplication and add core module for shared helper functions and logic. 
-
+- cleanup needPost-cache when data becomes stale. Currently the in memory cache is never invalidated. 

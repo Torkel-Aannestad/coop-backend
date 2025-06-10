@@ -120,7 +120,7 @@ func (app *application) mastodonBackgroundJob() {
 		}
 	})
 
-	// Todo: cleanup postcache when data becomes stale.
+	//Todo: cleanup postcache when data becomes stale.
 	//need timestamp on seenPosts map value
 
 }

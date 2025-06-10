@@ -46,8 +46,6 @@ func (app *application) createMessageHandler(w http.ResponseWriter, r *http.Requ
 }
 
 func (app *application) latestMessagesHandler(w http.ResponseWriter, r *http.Request) {
-	// returns the 25 last messages from db
-
 	messages, err := app.models.Messages.GetList(10, 0)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
