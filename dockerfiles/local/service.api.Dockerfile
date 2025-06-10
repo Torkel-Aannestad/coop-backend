@@ -27,6 +27,9 @@ RUN go build -o api .
 # Final stage: a small image with just the binary
 FROM alpine:latest
 
+#install curl
+RUN apk add --no-cache curl
+
 WORKDIR /root/
 
 COPY --from=builder /app/app/api .
