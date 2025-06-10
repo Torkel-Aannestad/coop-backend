@@ -40,4 +40,3 @@ func (app *application) backgroundJob(fn func()) {
 		fn()
 	}()
 }
-
