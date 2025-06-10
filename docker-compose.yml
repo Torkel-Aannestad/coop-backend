@@ -19,6 +19,20 @@ services:
     volumes:
       - monorepo-data:/var/lib/postgresql/monorepo/data
 
+  monorepo-postgres-db-testing:
+    container_name: monorepo-postgres-db-testing
+    restart: unless-stopped
+    image: postgres:latest
+    ports:
+      - "5455:5432"
+    user: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=social_media_aggregator
+    volumes:
+      - monorepo-data-testing:/var/lib/postgresql/monorepo/data
+
   api:
     container_name: service.api
     restart: unless-stopped
@@ -28,20 +42,27 @@ services:
     command: "--db-dsn=${DSN_DB_DEV}"
     ports:
       - "4000:4000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/v1/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       monorepo-postgres-db:
         condition: service_healthy
 
-  # mastodon:
-  #   container_name: service.mastodon
-  #   restart: unless-stopped
-  #   build:
-  #     context: .
-  #     dockerfile: dockerfiles/local/service.mastodon.Dockerfile
-  #   ports:
-  #     - "5000:5000"
-  #   depends_on:
-  #     - api
+  mastodon:
+    container_name: service.mastodon
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: dockerfiles/local/service.mastodon.Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   monorepo-data:
+  monorepo-data-testing:
