@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS messages (
     modified_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
     external_id text NOT NULL UNIQUE,
     author text NOT NULL,
-    title text NOT NULL,
     body text NOT NULL,
     platform text NOT NULL
 );

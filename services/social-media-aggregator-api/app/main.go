@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Torkel-Aannestad/coop-backend/services/social-media-aggregator-api/internal/database"
+	"github.com/Torkel-Aannestad/coop-backend/services/social-media-aggregator-api/sql/migrations"
 	"github.com/joho/godotenv"
 )
 
@@ -56,6 +57,11 @@ func main() {
 		logger.Error("failed to open db connection")
 		logger.Error(err.Error())
 		os.Exit(1)
+	}
+
+	err = database.MigrateFS(db, migrations.FS, ".")
+	if err != nil {
+		panic(err)
 	}
 
 	app := &application{
