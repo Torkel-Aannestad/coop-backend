@@ -2,12 +2,12 @@
 
 ## Design
 
-This project is design to handle social media messages across different platforms. Messages are collected by a seperate service to make the system flexible to add new social media platform, but also to keep spesific logic for the given platform isolated. 
-The mastodon service requests messages from mastodon.social and posts them to the main API.
-The main API collects messages and stores them in a PostgreSQL database. The reason for this approach was to be able to filter for a given topic, and to limit the load on the mastodon api in case of enforced rate limit etc.
-The system uses syncronous communication among services over http. I'm most comfortable with http-protocol and was the main reason for choosing that. 
-The system is built using pulling against the Mastodon api. I was going to implement the ability to holding the http connection open and pushing new data to the client, but did not get time to do so. There is thus no ability to stream from the API. 
-The Test database are used by messages_test.go in internal/database in the API. It's only a part of the compose for simplicity. The test db is used to test the data access layer. 
+- This project is design to handle social media messages across different platforms. Messages are collected by a seperate service to make the system flexible to add new social media platform, but also to keep spesific logic for the given platform isolated. 
+- The mastodon service requests messages from mastodon.social and posts them to the main API.
+- The main API collects messages and stores them in a PostgreSQL database. The reason for this approach was to be able to filter for a given topic, and to limit the load on the mastodon api in case of enforced rate limit etc.
+- The system uses syncronous communication among services over http. I'm most comfortable with http-protocol and was the main reason for choosing that. 
+- The system is built using pulling against the Mastodon api. I was going to implement the ability to holding the http connection open and pushing new data to the client, but did not get time to do so. There is thus no ability to stream from the API. 
+- The Test database are used by messages_test.go in internal/database in the API. It's only a part of the compose for simplicity. The test db is used to test the data access layer. 
 
 ## Stack
 - Chi router
@@ -60,6 +60,12 @@ BODY='{"external_id": "100", "author": "John McClane", "body": "Hans Gruber is a
 ## Reset the database
 - docker compose down
 - delete the db volume
+
+## Run code audit and testing
+```shell
+  make  audit/api
+  make  audit/mastodon
+```
 
 # Improvements & limitations
 - Input validation - This is an important feature for enforcing the contract between services and to give good error messages when experiencing errors. I wanted to create a shared validator packes between the services, but was out of time. 
