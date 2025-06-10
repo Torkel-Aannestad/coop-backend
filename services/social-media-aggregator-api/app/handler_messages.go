@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Torkel-Aannestad/coop-backend/services/social-media-aggregator-api/internal/database"
@@ -11,7 +10,6 @@ func (app *application) createMessageHandler(w http.ResponseWriter, r *http.Requ
 	var input struct {
 		ExternalId string `json:"external_id"`
 		Author     string `json:"author"`
-		Title      string `json:"title"`
 		Body       string `json:"body"`
 		Platform   string `json:"platform"`
 	}
@@ -25,20 +23,19 @@ func (app *application) createMessageHandler(w http.ResponseWriter, r *http.Requ
 	message := database.Message{
 		ExternalId: input.ExternalId,
 		Author:     input.Author,
-		Title:      input.Title,
 		Body:       input.Body,
 		Platform:   input.Platform,
 	}
 
-	fmt.Printf("message: %v\n", message)
 	// validate input
 
 	err = app.models.Messages.Insert(&message)
 	if err != nil {
-		// handle unique error for enternalId. continue with update instead.
+		//todo handle db unique error for enternalId
 		app.serverErrorResponse(w, r, err)
 		return
 	}
+	app.logger.Info("message created", "ExternalId", message.ExternalId) //remove
 
 	err = app.writeJSON(w, http.StatusCreated, envelope{"message": message}, nil)
 	if err != nil {
@@ -51,7 +48,7 @@ func (app *application) createMessageHandler(w http.ResponseWriter, r *http.Requ
 func (app *application) latestMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	// returns the 25 last messages from db
 
-	messages, err := app.models.Messages.GetList(25, 0)
+	messages, err := app.models.Messages.GetList(10, 0)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

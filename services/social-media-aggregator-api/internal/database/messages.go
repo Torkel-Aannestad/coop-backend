@@ -10,7 +10,6 @@ type Message struct {
 	ID         int64     `json:"id"`
 	ExternalId string    `json:"external_id"`
 	Author     string    `json:"author"`
-	Title      string    `json:"title"`
 	Body       string    `json:"body"`
 	Platform   string    `json:"platform"`
 	CreatedAt  time.Time `json:"-"`
@@ -29,17 +28,15 @@ func (m MessageModel) Insert(message *Message) error {
 	INSERT INTO messages (
 	external_id,
 	author,
-	title,
 	body,
 	platform
 	)
-	VALUES ($1, $2, $3, $4, $5)
+	VALUES ($1, $2, $3, $4)
 	RETURNING id, created_at, modified_at`
 
 	args := []any{
 		message.ExternalId,
 		message.Author,
-		message.Title,
 		message.Body,
 		message.Platform,
 	}
@@ -57,8 +54,8 @@ func (m *MessageModel) GetList(limit, offset int) ([]*Message, error) {
 	defer cancel()
 
 	query := `
-		SELECT id, external_id, author, title, body, platform, created_at, modified_at  FROM messages
-		ORDER BY created_at ASC
+		SELECT id, external_id, author, body, platform, created_at, modified_at  FROM messages
+		ORDER BY id DESC
 		LIMIT $1 OFFSET $2
 	`
 	args := []any{limit, offset}
@@ -76,7 +73,6 @@ func (m *MessageModel) GetList(limit, offset int) ([]*Message, error) {
 			&message.ID,
 			&message.ExternalId,
 			&message.Author,
-			&message.Title,
 			&message.Body,
 			&message.Platform,
 			&message.CreatedAt,
